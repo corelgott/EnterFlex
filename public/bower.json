@@ -1,0 +1,23 @@
+{
+  "name": "public",
+  "authors": [
+    "corelgott <corelgott@two-nerds.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.6.4",
+    "angular-material": "^1.1.4",
+    "crypto-js": "^3.1.9"
+  }
+}
