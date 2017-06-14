@@ -12,22 +12,30 @@ app.controller('mainCtrl', ($scope, $http) => {
     $scope.newUser = {};
 
     $scope.register = function() {
-        var cardHash = CryptoJS.SHA256($scope.newUser.cardId).toString();
-        
-        var loginData = { username : $scope.newUser.username, password : $scope.newUser.password };
-        // use the card id & the card hash to encrypt the login data
-        var token = CryptoJS.AES.encrypt(JSON.stringify(loginData), $scope.newUser.cardId + cardHash);
-        
-        var regData = {
-            name  : $scope.newUser.name,
-            hash  : cardHash,
-            salt  : token.iv,
-            token : token.toString()
-        };
-        $scope.newUser = {};
+        $http.get('https://www.random.org/cgi-bin/randbyte?nbytes=16&format=h').then(function(body) {
+            // ensure we got random data
+            if (!body.data) { alert('error retrieving random data!'); return; }
+            // extract the bytes for the iv
+            var iv = CryptoJS.enc.Base64.parse(body.data.replace(/ /g, ''));
+            // create a hash for the card id
+            var cardHash = CryptoJS.SHA256($scope.newUser.cardId).toString();
+            // toss in the username and the password
+            var loginData = { username : $scope.newUser.username, password : $scope.newUser.password };
+            // use the card id & the card hash to encrypt the login data
+            var token = CryptoJS.AES.encrypt(JSON.stringify(loginData), $scope.newUser.cardId + cardHash, { iv : iv });
+            
+            // pack everything
+            var regData = {
+                name  : $scope.newUser.name,
+                hash  : cardHash,
+                iv    : iv.toString(),
+                token : token.toString()
+            };
+            $scope.newUser = {};
 
-        $http.post('/register', regData).then(function() {
-            $scope.reloadAll();
+            $http.post('/register', regData).then(function() {
+                $scope.reloadAll();
+            });
         });
     }
 

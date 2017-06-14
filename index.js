@@ -41,7 +41,7 @@ app.get('/remove/:id', (req, res) => {
 app.post('/register', (req, res) => {
     var info = req.body;
     console.log('register ' + JSON.stringify(info));
-    storage.register(info.name, info.hash, info.token, info.salt).then(function(doc) {
+    storage.register(info.name, info.hash, info.token, info.iv).then(function(doc) {
         res.json({ status : 'success', doc });
     }).catch((err) => {
         res.json({ status : 'error', msg : err})
